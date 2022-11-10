@@ -87,6 +87,8 @@ XDT = "XDT"
 # set aws credentials:
 AWS_ID = os.getenv('AWS_ACCESS_KEY', "")
 AWS_SECRET = os.getenv('AWS_SECRET_KEY', "")
+# set aws bucket name:
+BUCKET_NAME = os.getenv('BUCKET_NAME','vhive-stacking')
 
 model_config = {
     'models': [
@@ -182,7 +184,7 @@ def reduce(training_responses) -> dict:
 class GreeterServicer(helloworld_pb2_grpc.GreeterServicer):
     def __init__(self, transferType, XDTconfig=None):
 
-        self.benchName = 'vhive-stacking'
+        self.benchName = BUCKET_NAME
         self.dataset = generate_dataset()
         self.modelConfig = model_config
         self.transferType = transferType
@@ -297,7 +299,7 @@ class GreeterServicer(helloworld_pb2_grpc.GreeterServicer):
 def serve():
     transferType = os.getenv('TRANSFER_TYPE', S3)
     if transferType == S3:
-        storage.init("S3", 'vhive-stacking')
+        storage.init("S3", BUCKET_NAME )
         log.info("Using inline or s3 transfers")
         max_workers = int(os.getenv("MAX_SERVER_THREADS", 10))
         server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
