@@ -35,7 +35,7 @@ spec:
     spec:
       containerConcurrency: 1
       containers:
-        - image: docker.io/vhiveease/stacking-training-driver:latest
+        - image: docker.io/jingren1021/stacking-training-driver:latest
           imagePullPolicy: Always
           args: ["-tAddr", "trainer.default.svc.cluster.local:80", "-rAddr", "reducer.default.svc.cluster.local:80", "-mAddr", "metatrainer.default.svc.cluster.local:80"]
           env:
@@ -48,7 +48,7 @@ spec:
             - name: BUCKET_NAME
               value: ${BUCKET_NAME}
             - name: AWS_REGION
-              value: "us-west-1"
+              value: ${AWS_REGION}
             - name: CONCURRENT_TRAINING
               value: "false"
             - name: TrainersNum
