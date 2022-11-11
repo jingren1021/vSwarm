@@ -35,7 +35,7 @@ spec:
     spec:
       containerConcurrency: 1
       containers:
-        - image: docker.io/vhiveease/stacking-training-trainer:latest
+        - image: docker.io/jingren1021/stacking-training-trainer:latest
           imagePullPolicy: Always
           env:
             - name: TRANSFER_TYPE
@@ -47,11 +47,11 @@ spec:
             - name: BUCKET_NAME
               value: ${BUCKET_NAME}
             - name: AWS_REGION
-              value: "us-west-1"
+              value: ${AWS_REGION}
             - name: MAX_SERVER_THREADS
               value: "10"
             - name: ENABLE_TRACING
-              value: "false"
+              value: ${ENABLE_TRACING}
           ports:
             # For `h2c`, see https://knative.tips/networking/http2/
             - name: h2c

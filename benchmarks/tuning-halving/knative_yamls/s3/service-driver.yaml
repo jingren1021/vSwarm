@@ -48,7 +48,7 @@ spec:
             - name: BUCKET_NAME
               value: ${BUCKET_NAME}
             - name: AWS_REGION
-              value: "us-west-1"
+              value: ${AWS_REGION}
             - name: MAX_SERVER_THREADS
               value: "10"
             - name: ENABLE_TRACING
