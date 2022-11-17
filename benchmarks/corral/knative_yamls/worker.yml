@@ -31,7 +31,7 @@ spec:
       containers:
         - image: docker.io/vhiveease/word_count:volatile
           imagePullPolicy: Always
-          args: ["--knative", "--verbose", "--out", "s3://vhive-corral-bench/word_count/vhive-ubench/out"]
+          args: ["--knative", "--verbose", "--out", "s3://jr-corral-bench/outputs"]
           env:
             - name: KNATIVE
               value: "1"
