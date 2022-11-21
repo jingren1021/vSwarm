@@ -50,9 +50,9 @@ spec:
             - name: AWS_REGION
               value: ${AWS_REGION}
             - name: MAX_SERVER_THREADS
-              value: "10"
+              value: ${MAX_SERVER_THREADS}
             - name: ENABLE_TRACING
-              value: ${ENABLE_TRACING}
+              value: "true"
           ports:
             # For `h2c`, see https://knative.tips/networking/http2/
             - name: h2c

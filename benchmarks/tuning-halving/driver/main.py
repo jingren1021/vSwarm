@@ -35,9 +35,6 @@ import helloworld_pb2_grpc
 import helloworld_pb2
 import tuning_pb2_grpc
 import tuning_pb2
-import destination as XDTdst
-import source as XDTsrc
-import utils as XDTutil
 
 import grpc
 from grpc_reflection.v1alpha import reflection
@@ -126,10 +123,6 @@ class GreeterServicer(helloworld_pb2_grpc.GreeterServicer):
                 aws_access_key_id=AWS_ID,
                 aws_secret_access_key=AWS_SECRET
             )
-        elif transferType == XDT:
-            if XDTconfig is None:
-                log.fatal("Empty XDT config")
-            self.XDTconfig = XDTconfig
 
     def handler_broker(self, event, context):
         dataset = generate_dataset()
@@ -231,9 +224,6 @@ def serve():
         server.add_insecure_port('[::]:' + args.sp)
         server.start()
         server.wait_for_termination()
-    elif transferType == XDT:
-        log.fatal("XDT not yet supported")
-        XDTconfig = XDTutil.loadConfig()
     else:
         log.fatal("Invalid Transfer type")
 

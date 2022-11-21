@@ -47,10 +47,6 @@ import tracing
 import storage
 import tuning_pb2_grpc
 import tuning_pb2
-import destination as XDTdst
-import source as XDTsrc
-import utils as XDTutil
-
 
 
 from concurrent import futures
@@ -120,10 +116,6 @@ class TrainerServicer(tuning_pb2_grpc.TrainerServicer):
                 aws_access_key_id=AWS_ID,
                 aws_secret_access_key=AWS_SECRET
             )
-        elif transferType == XDT:
-            if XDTconfig is None:
-                log.fatal("Empty XDT config")
-            self.XDTconfig = XDTconfig
 
     def Train(self, request, context):
         # Read from S3
@@ -179,9 +171,6 @@ def serve():
         server.add_insecure_port('[::]:' + args.sp)
         server.start()
         server.wait_for_termination()
-    elif transferType == XDT:
-        log.fatal("XDT not yet supported")
-        XDTconfig = XDTutil.loadConfig()
     else:
         log.fatal("Invalid Transfer type")
 
@@ -189,3 +178,4 @@ def serve():
 if __name__ == '__main__':
     log.basicConfig(level=log.INFO)
     serve()
+    
