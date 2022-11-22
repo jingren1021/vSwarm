@@ -212,8 +212,7 @@ def serve():
     transferType = os.getenv('TRANSFER_TYPE', S3)
     if transferType == S3:
         global storageBackend
-        storageBackend = Storage('vhive-tuning')
-        storage.init("S3", BUCKET_NAME)
+        storageBackend = Storage(BUCKET_NAME)
         log.info("Using inline or s3 transfers")
         max_workers = int(os.getenv("MAX_SERVER_THREADS", 10))
         server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
