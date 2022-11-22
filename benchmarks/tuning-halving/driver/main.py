@@ -35,9 +35,6 @@ import helloworld_pb2_grpc
 import helloworld_pb2
 import tuning_pb2_grpc
 import tuning_pb2
-import destination as XDTdst
-import source as XDTsrc
-import utils as XDTutil
 
 import grpc
 from grpc_reflection.v1alpha import reflection
@@ -81,6 +78,8 @@ storageBackend = None
 # set aws credentials:
 AWS_ID = os.getenv('AWS_ACCESS_KEY', "")
 AWS_SECRET = os.getenv('AWS_SECRET_KEY', "")
+# set aws bucket name:
+BUCKET_NAME = os.getenv('BUCKET_NAME','vhive-tuning')
 
 def get_self_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -116,7 +115,7 @@ def generate_hyperparam_sets(param_config):
 class GreeterServicer(helloworld_pb2_grpc.GreeterServicer):
     def __init__(self, transferType, XDTconfig=None):
 
-        self.benchName = 'vhive-tuning'
+        self.benchName = BUCKET_NAME
         self.transferType = transferType
         if transferType == S3:
             self.s3_client = boto3.resource(
@@ -125,10 +124,6 @@ class GreeterServicer(helloworld_pb2_grpc.GreeterServicer):
                 aws_access_key_id=AWS_ID,
                 aws_secret_access_key=AWS_SECRET
             )
-        elif transferType == XDT:
-            if XDTconfig is None:
-                log.fatal("Empty XDT config")
-            self.XDTconfig = XDTconfig
 
     def handler_broker(self, event, context):
         dataset = generate_dataset()
@@ -218,6 +213,7 @@ def serve():
     if transferType == S3:
         global storageBackend
         storageBackend = Storage('vhive-tuning')
+        storage.init("S3", BUCKET_NAME)
         log.info("Using inline or s3 transfers")
         max_workers = int(os.getenv("MAX_SERVER_THREADS", 10))
         server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
@@ -231,9 +227,6 @@ def serve():
         server.add_insecure_port('[::]:' + args.sp)
         server.start()
         server.wait_for_termination()
-    elif transferType == XDT:
-        log.fatal("XDT not yet supported")
-        XDTconfig = XDTutil.loadConfig()
     else:
         log.fatal("Invalid Transfer type")
 

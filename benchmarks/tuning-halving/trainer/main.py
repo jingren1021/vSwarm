@@ -47,10 +47,6 @@ import tracing
 from storage import Storage
 import tuning_pb2_grpc
 import tuning_pb2
-import destination as XDTdst
-import source as XDTsrc
-import utils as XDTutil
-
 
 
 from concurrent import futures
@@ -77,7 +73,8 @@ storageBackend = None
 # set aws credentials:
 AWS_ID = os.getenv('AWS_ACCESS_KEY', "")
 AWS_SECRET = os.getenv('AWS_SECRET_KEY', "")
-
+# set aws bucket name:
+BUCKET_NAME = os.getenv('BUCKET_NAME','vhive-tuning')
 
 def get_self_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -110,7 +107,7 @@ def model_dispatcher(model_name):
 class TrainerServicer(tuning_pb2_grpc.TrainerServicer):
     def __init__(self, transferType, XDTconfig=None):
 
-        self.benchName = 'vhive-tuning'
+        self.benchName = BUCKET_NAME
         self.transferType = transferType
         self.trainer_id = ""
         if transferType == S3:
@@ -120,10 +117,6 @@ class TrainerServicer(tuning_pb2_grpc.TrainerServicer):
                 aws_access_key_id=AWS_ID,
                 aws_secret_access_key=AWS_SECRET
             )
-        elif transferType == XDT:
-            if XDTconfig is None:
-                log.fatal("Empty XDT config")
-            self.XDTconfig = XDTconfig
 
     def Train(self, request, context):
         # Read from S3
@@ -172,6 +165,7 @@ def serve():
     if transferType == S3:
         global storageBackend
         storageBackend = Storage('vhive-tuning')
+        storage.init("S3", BUCKET_NAME)
         log.info("Using inline or s3 transfers")
         max_workers = int(os.getenv("MAX_SERVER_THREADS", 10))
         server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
@@ -180,9 +174,6 @@ def serve():
         server.add_insecure_port('[::]:' + args.sp)
         server.start()
         server.wait_for_termination()
-    elif transferType == XDT:
-        log.fatal("XDT not yet supported")
-        XDTconfig = XDTutil.loadConfig()
     else:
         log.fatal("Invalid Transfer type")
 
@@ -190,3 +181,4 @@ def serve():
 if __name__ == '__main__':
     log.basicConfig(level=log.INFO)
     serve()
+    
