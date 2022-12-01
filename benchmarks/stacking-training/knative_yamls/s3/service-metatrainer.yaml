@@ -23,7 +23,7 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: metatrainer
+  name: metatrainer-1
   namespace: default
 spec:
   template:
@@ -45,7 +45,7 @@ spec:
             - name: AWS_SECRET_KEY
               value: ${AWS_SECRET_KEY}
             - name: BUCKET_NAME
-              value: ${BUCKET_NAME}
+              value: "010bc"
             - name: AWS_REGION
               value: "us-west-1"
             - name: MAX_SERVER_THREADS
